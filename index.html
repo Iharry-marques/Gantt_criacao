@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard de Tarefas - Suno | CRIAÇÃO</title>
+
+  <!-- Fonte Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- vis-timeline versão mais atual -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-timeline/7.7.3/vis-timeline-graph2d.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/vis-timeline/7.7.3/vis-timeline-graph2d.min.css" rel="stylesheet" />
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="header">
+    <div class="header-content">
+      <div class="header-info">
+        <h1>Dashboard de Tarefas - Suno</h1>
+        <p>Equipe de CRIAÇÃO</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-item">
+          <div class="stat-number" id="total-tasks">--</div>
+          <div class="stat-label">Tarefas</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="active-projects">--</div>
+          <div class="stat-label">Projetos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="tarefas">🔨 Tarefas</button>
+      <button class="nav-tab" data-tab="projetos" disabled>📋 Projetos</button>
+      <button class="nav-tab" data-tab="kanban" disabled>📊 Kanban</button>
+    </nav>
+
+    <div class="tab-content">
+      <!-- Aba Tarefas -->
+      <div class="tab-pane active" id="tarefas">
+        <div class="filters-section">
+          <div class="filters-title">Filtros</div>
+          <div class="filter-group">
+            <div class="filter-item">
+              <label class="filter-label">Cliente:</label>
+              <select class="filter-select" id="clientFilter">
+                <option value="">Todos os clientes</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label class="filter-label">Responsável:</label>
+              <select class="filter-select" id="ownerFilter">
+                <option value="">Todos os responsáveis</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-color tarefa"></div>
+            <span>Tarefa Principal</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color subtarefa"></div>
+            <span>Subtarefa</span>
+          </div>
+        </div>
+
+        <div id="error-message" class="error" style="display: none;"></div>
+        <div id="loading" class="loading">Carregando dados...</div>
+        <div id="gantt-container" class="gantt-container" style="display: none;"></div>
+        <div id="empty-state" class="empty-state" style="display: none;">
+          <h3>Nenhuma tarefa encontrada</h3>
+          <p>Não há tarefas para os filtros selecionados.</p>
+        </div>
+      </div>
+
+      <!-- Aba Projetos -->
+      <div class="tab-pane" id="projetos">
+        <div class="coming-soon">
+          <h2>Projetos</h2>
+          <p>Esta funcionalidade será implementada em breve.</p>
+          <span class="coming-soon-badge">Em Desenvolvimento</span>
+        </div>
+      </div>
+
+      <!-- Aba Kanban -->
+      <div class="tab-pane" id="kanban">
+        <div class="coming-soon">
+          <h2>Kanban</h2>
+          <p>Esta funcionalidade será implementada em breve.</p>
+          <span class="coming-soon-badge">Em Desenvolvimento</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script principal -->
+  <script src="script.js"></script>
+</body>
+</html>
