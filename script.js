@@ -7,6 +7,8 @@
  * - Filtros por cliente e responsável
  * - Tratamento robusto de datas inválidas
  * - Logs detalhados para debug
+ * - Otimizações para largura total da tela
+ * - CORREÇÃO: Timeline agora ocupa toda altura disponível
  */
 
 // Gerenciamento de abas
@@ -273,10 +275,17 @@ function renderGanttChart() {
       console.warn('IDs duplicados encontrados:', duplicateIds);
     }
 
-    // Opções do timeline
+    // Calcular altura dinâmica baseada no número de grupos
+    const containerHeight = container.offsetHeight;
+    const minItemHeight = 35; // altura mínima por linha
+    const calculatedHeight = Math.max(containerHeight, groups.length * minItemHeight + 100);
+
+    console.log(`Container height: ${containerHeight}px, Calculated height: ${calculatedHeight}px, Groups: ${groups.length}`);
+
+    // Opções do timeline - CORRIGIDAS para ocupar altura total
     const options = {
       width: '100%',
-      height: '600px',
+      height: containerHeight + 'px', // Usar altura exata do container
       orientation: 'top',
       showMajorLabels: true,
       showMinorLabels: true,
@@ -289,7 +298,8 @@ function renderGanttChart() {
         overflowMethod: 'cap'
       },
       margin: {
-        item: { horizontal: 10, vertical: 5 }
+        item: { horizontal: 8, vertical: 2 },
+        axis: 20
       },
       locale: 'pt-BR',
       format: {
@@ -315,7 +325,15 @@ function renderGanttChart() {
           month:      'YYYY',
           year:       ''
         }
-      }
+      },
+      horizontalScroll: true,
+      verticalScroll: true,
+      autoResize: false, // Desabilitado para controle manual
+      maxHeight: containerHeight, // Altura máxima = altura do container
+      minHeight: containerHeight, // Altura mínima = altura do container
+      fit: false, // Não ajustar automaticamente o zoom
+      start: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1), // Início: mês passado
+      end: new Date(new Date().getFullYear(), new Date().getMonth() + 2, 1) // Fim: 2 meses à frente
     };
 
     // Destruir timeline anterior se existir
@@ -336,12 +354,41 @@ function renderGanttChart() {
       console.log('Double click:', properties);
     });
 
+    // Forçar redimensionamento após criação
+    timeline.on('changed', function () {
+      // Força o timeline a ocupar toda a altura disponível
+      const visContainer = container.querySelector('.vis-timeline');
+      if (visContainer) {
+        visContainer.style.height = '100%';
+      }
+    });
+
     // Mostrar container
     loading.style.display = 'none';
     emptyState.style.display = 'none';
     container.style.display = 'block';
     
     console.log('Timeline criado com sucesso');
+
+    // Aplicar estilos forçados após criação
+    setTimeout(() => {
+      if (timeline) {
+        // Forçar altura 100% em todos os elementos internos do vis-timeline
+        const visElements = container.querySelectorAll('.vis-timeline, .vis-panel, .vis-content');
+        visElements.forEach(el => {
+          el.style.height = '100%';
+        });
+        
+        // Remover altura fixa do background que causa o espaço em branco
+        const backgroundPanel = container.querySelector('.vis-panel.vis-background');
+        if (backgroundPanel) {
+          backgroundPanel.style.height = '100%';
+        }
+        
+        timeline.redraw();
+        console.log('Timeline redimensionado para ocupar altura total');
+      }
+    }, 100);
 
   } catch (error) {
     console.error('Erro ao criar timeline:', error);
@@ -360,11 +407,53 @@ function showError(message) {
   container.style.display = 'none';
 }
 
+// Redimensionar timeline quando a janela for redimensionada
+function handleResize() {
+  if (timeline) {
+    const container = document.getElementById('gantt-container');
+    const containerHeight = container.offsetHeight;
+    
+    // Atualizar altura do timeline
+    timeline.setOptions({
+      height: containerHeight + 'px',
+      maxHeight: containerHeight,
+      minHeight: containerHeight
+    });
+    
+    // Forçar altura 100% nos elementos internos
+    setTimeout(() => {
+      const visElements = container.querySelectorAll('.vis-timeline, .vis-panel, .vis-content');
+      visElements.forEach(el => {
+        el.style.height = '100%';
+      });
+      
+      const backgroundPanel = container.querySelector('.vis-panel.vis-background');
+      if (backgroundPanel) {
+        backgroundPanel.style.height = '100%';
+      }
+      
+      timeline.redraw();
+    }, 50);
+  }
+}
+
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM carregado, inicializando aplicação...');
   initTabs();
   loadData();
+  
+  // Listener para redimensionamento
+  window.addEventListener('resize', handleResize);
+});
+
+// Cleanup ao sair da página
+window.addEventListener('beforeunload', () => {
+  if (timeline) {
+    timeline.destroy();
+    timeline = null;
+  }
+  window.removeEventListener('resize', handleResize);
 });
 
 // Funções de debug úteis (disponíveis no console)
@@ -372,6 +461,32 @@ window.debugDashboard = {
   // Verificar dados carregados
   getData: () => allData,
   getFilteredData: () => filteredData,
+  
+  // Forçar redimensionamento do timeline
+  resizeTimeline: () => {
+    if (timeline) {
+      handleResize();
+      console.log('Timeline redimensionado forçadamente');
+    } else {
+      console.log('Timeline não inicializado');
+    }
+  },
+  
+  // Corrigir altura do timeline
+  fixTimelineHeight: () => {
+    if (timeline) {
+      const container = document.getElementById('gantt-container');
+      const visElements = container.querySelectorAll('.vis-timeline, .vis-panel, .vis-content, .vis-panel.vis-background');
+      visElements.forEach(el => {
+        el.style.height = '100%';
+        el.style.minHeight = '100%';
+      });
+      timeline.redraw();
+      console.log('Altura do timeline corrigida');
+    } else {
+      console.log('Timeline não inicializado');
+    }
+  },
   
   // Analisar duplicatas
   findDuplicates: () => {
@@ -416,3 +531,4 @@ window.debugDashboard = {
 };
 
 console.log('🔧 Debug: Use window.debugDashboard no console para análise dos dados');
+console.log('🔧 Debug: Use window.debugDashboard.fixTimelineHeight() para corrigir altura se necessário');

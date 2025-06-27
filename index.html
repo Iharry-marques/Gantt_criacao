@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -25,6 +25,19 @@
         <h1>Dashboard de Tarefas - Suno</h1>
         <p>Equipe de CRIAÇÃO</p>
       </div>
+      
+      <!-- Legenda movida para o header -->
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-color tarefa"></div>
+          <span>Tarefa Principal</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color subtarefa"></div>
+          <span>Subtarefa</span>
+        </div>
+      </div>
+      
       <div class="header-stats">
         <div class="stat-item">
           <div class="stat-number" id="total-tasks">--</div>
@@ -44,16 +57,6 @@
       <button class="nav-tab" data-tab="projetos" disabled>📋 Projetos</button>
       <button class="nav-tab" data-tab="kanban" disabled>📊 Kanban</button>
     </nav>
-            <div class="legend">
-          <div class="legend-item">
-            <div class="legend-color tarefa"></div>
-            <span>Tarefa Principal</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-color subtarefa"></div>
-            <span>Subtarefa</span>
-          </div>
-        </div>
 
     <div class="tab-content">
       <!-- Aba Tarefas -->

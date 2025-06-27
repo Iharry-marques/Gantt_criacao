@@ -31,11 +31,11 @@ body {
   min-height: 100vh;
 }
 
-/* Header moderno */
+/* Header moderno com 3 colunas */
 .header {
   background: linear-gradient(135deg, var(--bg-white) 0%, #f8fafc 100%);
   border-bottom: 1px solid var(--border-color);
-  padding: 2rem 2rem 1.5rem;
+  padding: 1.5rem 2rem;
   box-shadow: var(--shadow-sm);
   position: relative;
   overflow: hidden;
@@ -52,15 +52,15 @@ body {
 }
 
 .header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
+  gap: 2rem;
 }
 
 .header-info h1 {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 0.25rem;
@@ -71,7 +71,7 @@ body {
 
 .header-info h1::before {
   content: '📊';
-  font-size: 1.75rem;
+  font-size: 1.5rem;
 }
 
 .header-info p {
@@ -88,14 +88,54 @@ body {
   font-size: 1rem;
 }
 
+/* Legenda no header - centralizada */
+.legend {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-sm);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.legend-color {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.legend-color.tarefa {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+}
+
+.legend-color.subtarefa {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+}
+
+/* Stats - alinhados à direita */
 .header-stats {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
+  justify-content: flex-end;
 }
 
 .stat-item {
   text-align: center;
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 1.25rem;
   background: rgba(255, 255, 255, 0.8);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-light);
@@ -118,10 +158,9 @@ body {
   letter-spacing: 0.05em;
 }
 
-/* Container principal */
+/* Container principal - sem limitação de largura */
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
   padding: 0;
 }
 
@@ -181,7 +220,7 @@ body {
 /* Conteúdo principal */
 .tab-content {
   padding: 2rem;
-  min-height: calc(100vh - 300px);
+  min-height: calc(100vh - 250px);
 }
 
 .tab-pane {
@@ -198,13 +237,13 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Card de filtros moderno */
+/* Card de filtros - mais compacto */
 .filters-section {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 2rem;
-  margin-bottom: 2rem;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.5rem;
   box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
@@ -221,10 +260,10 @@ body {
 }
 
 .filters-title {
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -232,7 +271,7 @@ body {
 
 .filters-title::before {
   content: '⚙️';
-  font-size: 1rem;
+  font-size: 0.875rem;
 }
 
 .filter-group {
@@ -279,56 +318,20 @@ body {
   border-color: var(--primary-dark);
 }
 
-/* Legenda moderna */
-.legend {
-  display: flex;
-  gap: 2rem;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
-  flex-wrap: wrap;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-md);
-  background: var(--bg-light);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.legend-color {
-  width: 18px;
-  height: 18px;
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-sm);
-  flex-shrink: 0;
-}
-
-.legend-color.tarefa {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-}
-
-.legend-color.subtarefa {
-  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-}
-
-/* Container do Gantt moderno */
+/* Container do Gantt - CORRIGIDO para altura total sem espaços */
 .gantt-container {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  height: 650px;
+  height: calc(100vh - 400px);
+  min-height: 500px;
+  max-height: 800px;
   overflow: hidden;
   box-shadow: var(--shadow-lg);
   position: relative;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .gantt-container::before {
@@ -449,21 +452,44 @@ body {
   letter-spacing: 0.05em;
 }
 
-/* Responsividade */
+/* Responsividade melhorada */
+@media (max-width: 1024px) {
+  .header-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    text-align: center;
+  }
+  
+  .header-stats {
+    justify-content: center;
+  }
+  
+  .legend {
+    gap: 1rem;
+  }
+  
+  .gantt-container {
+    height: calc(100vh - 450px);
+  }
+}
+
 @media (max-width: 768px) {
   .header {
     padding: 1.5rem 1rem;
   }
   
   .header-content {
-    flex-direction: column;
     gap: 1rem;
-    text-align: center;
   }
   
   .header-stats {
-    justify-content: center;
     gap: 1rem;
+  }
+  
+  .legend {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem;
   }
   
   .nav-tabs {
@@ -479,14 +505,90 @@ body {
     grid-template-columns: 1fr;
   }
   
-  .legend {
-    flex-direction: column;
-    gap: 1rem;
+  .gantt-container {
+    height: calc(100vh - 500px);
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-info h1 {
+    font-size: 1.5rem;
   }
   
-  .gantt-container {
-    height: 500px;
+  .stat-item {
+    padding: 0.5rem 1rem;
+    min-width: 70px;
   }
+  
+  .stat-number {
+    font-size: 1.25rem;
+  }
+  
+  .legend-item {
+    font-size: 0.75rem;
+  }
+  
+  .legend-color {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* CORREÇÕES ESPECÍFICAS para vis-timeline ocupar altura total */
+
+/* Forçar vis-timeline a ocupar 100% da altura do container */
+.gantt-container .vis-timeline {
+  height: 100% !important;
+  width: 100% !important;
+  min-height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Todos os painéis internos devem ocupar altura total */
+.gantt-container .vis-panel {
+  height: 100% !important;
+  min-height: 100% !important;
+}
+
+/* Painel de fundo que estava causando o espaço em branco */
+.gantt-container .vis-panel.vis-background {
+  height: 100% !important;
+  min-height: 100% !important;
+  flex: 1 !important;
+}
+
+/* Área de conteúdo principal */
+.gantt-container .vis-content {
+  height: 100% !important;
+  min-height: 100% !important;
+  flex: 1 !important;
+  overflow: auto !important;
+}
+
+/* Container principal do timeline */
+.gantt-container .vis-timeline > div {
+  height: 100% !important;
+}
+
+/* Área central onde ficam as tarefas */
+.gantt-container .vis-panel.vis-center {
+  height: 100% !important;
+  min-height: 100% !important;
+  flex: 1 !important;
+}
+
+/* Área da esquerda com os nomes dos responsáveis */
+.gantt-container .vis-panel.vis-left {
+  height: 100% !important;
+  min-height: 100% !important;
+}
+
+/* Container que contém todos os items */
+.gantt-container .vis-itemset {
+  height: 100% !important;
+  min-height: 100% !important;
 }
 
 /* Melhorias no vis-timeline */
