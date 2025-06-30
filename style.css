@@ -509,29 +509,34 @@ body {
 /* Itens do timeline - COMPACTOS */
 .vis-item.vis-box.tarefa {
   background: linear-gradient(135deg, var(--suno-yellow) 0%, var(--suno-yellow-dark) 100%) !important;
-  border: 1px solid var(--suno-yellow-dark) !important;
+  border: 2px solid var(--suno-yellow-dark) !important;
   color: var(--text-primary) !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   border-radius: var(--radius-sm) !important;
-  box-shadow: var(--shadow-sm) !important;
-  font-size: 10px !important; /* ✅ FONTE MUITO MENOR */
-  height: 18px !important; /* ✅ ALTURA MENOR - MAIS LINHAS */
+  box-shadow: 0 2px 6px rgba(255, 200, 1, 0.3) !important;
+  font-size: 10px !important;
+  height: 20px !important;
   line-height: 16px !important;
   overflow: hidden !important;
-  padding: 1px 4px !important; /* ✅ PADDING MENOR */
+  padding: 2px 6px !important;
+  cursor: pointer !important;
+  user-select: none !important;
 }
-
 .vis-item.vis-box.subtarefa {
-  background: linear-gradient(135deg, var(--text-secondary) 0%, var(--text-primary) 100%) !important;
-  border: 1px dashed var(--text-primary) !important;
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+  border: 1px dashed #374151 !important;
   color: var(--bg-white) !important;
+  font-weight: 500 !important;
   border-radius: var(--radius-sm) !important;
-  box-shadow: var(--shadow-sm) !important;
-  font-size: 10px !important; /* ✅ FONTE MUITO MENOR */
-  height: 18px !important; /* ✅ ALTURA MENOR - MAIS LINHAS */
-  line-height: 16px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+  font-size: 9px !important;
+  height: 18px !important;
+  line-height: 14px !important;
   overflow: hidden !important;
-  padding: 1px 4px !important; /* ✅ PADDING MENOR */
+  padding: 2px 4px !important;
+  opacity: 0.85 !important;
+  cursor: pointer !important;
+  user-select: none !important;
 }
 
 .vis-item.vis-selected {

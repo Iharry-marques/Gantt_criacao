@@ -462,7 +462,11 @@ function renderGanttChart() {
       try {
         // Criar ID único garantido
         const uniqueId = `item-${itemCounter}-${taskId}`;
-        const isSubtask = item.ParentTaskID !== null && item.ParentTaskID !== undefined;
+        const isSubtask = item.ParentTaskID && 
+                 item.ParentTaskID !== null && 
+                 item.ParentTaskID !== undefined && 
+                 item.ParentTaskID !== "" &&
+                 item.ParentTaskID.toString().trim() !== "";
         const className = isSubtask ? 'subtarefa' : 'tarefa';
         const tipo = isSubtask ? 'Subtarefa' : 'Tarefa principal';
 
@@ -497,7 +501,7 @@ function renderGanttChart() {
         const taskItem = {
           id: uniqueId,
           group: item.TaskOwnerDisplayName || 'Sem responsável',
-          content: `${item.ClientNickname || 'N/A'} | ${item.RequestTypeName || 'N/A'} | ${item.TaskTitle || 'Sem título'}`,
+          content: `${isSubtask ? '└─ ' : ''}${item.ClientNickname || 'N/A'} | ${item.RequestTypeName || 'N/A'} | ${item.TaskTitle || 'Sem título'}`,
           start: startDate,
           end: endDate,
           className: className,
@@ -542,13 +546,7 @@ function renderGanttChart() {
       stack: true,
       showTooltips: true,
       // ✅ CONFIGURAÇÕES ANTI-MOVIMENTO
-      editable: {
-        add: false,
-        updateTime: false,
-        updateGroup: false,
-        remove: false,
-        overrideItems: false
-      },
+      editable: false,
       selectable: true,
       multiselect: false,
       // ✅ MÁXIMA DENSIDADE - MAIS LINHAS
@@ -619,36 +617,6 @@ function renderGanttChart() {
 
     timeline.on('doubleClick', function (properties) {
       console.log('👆 Double click:', properties);
-    });
-
-    // ✅ PREVENIR COMPLETAMENTE O MOVIMENTO DAS BARRAS
-    timeline.on('click', function (properties) {
-      if (properties.item) {
-        timeline.setSelection(properties.item);
-      }
-    });
-
-    // ✅ BLOQUEAR TODOS OS TIPOS DE EDIÇÃO
-    timeline.on('itemover', function (properties) {
-      // Bloquear cursor de redimensionamento
-      const item = timeline.itemsData.get(properties.item);
-      if (item) {
-        properties.event.preventDefault();
-      }
-    });
-
-    // ✅ PREVENIR DRAG & DROP
-    timeline.on('mouseDown', function (properties) {
-      if (properties.item) {
-        properties.event.preventDefault();
-        timeline.setSelection(properties.item);
-      }
-    });
-
-    // ✅ PREVENIR QUALQUER TENTATIVA DE EDIÇÃO
-    timeline.on('changed', function () {
-      // Força as barras a permanecerem nas posições originais
-      timeline.redraw();
     });
 
     // Mostrar container
