@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard de Tarefas - Suno | CRIAÇÃO</title>
+  <title>Dashboard de Tarefas - Suno United Creators (Ultra Compacto)</title>
 
   <!-- Fonte Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,25 +19,41 @@
   
 </head>
 <body>
+  <!-- HEADER ULTRA COMPACTO -->
   <div class="header">
     <div class="header-content">
+      <!-- Logo e informações -->
       <div class="header-info">
-        <h1>Dashboard de Tarefas - Suno</h1>
-        <p>Equipe de CRIAÇÃO</p>
+        <div class="logo">S</div>
+        <div>
+          <h1>Dashboard de Tarefas</h1>
+          <p>Suno United Creators</p>
+        </div>
       </div>
       
-      <!-- Legenda movida para o header -->
+      <!-- Controles de visualização do Gantt -->
+      <div class="gantt-controls">
+        <div class="view-controls">
+          <span class="view-label">Zoom:</span>
+          <button class="zoom-btn" id="zoom-out" title="Diminuir zoom">-</button>
+          <span class="current-view" id="current-view">Semanas</span>
+          <button class="zoom-btn" id="zoom-in" title="Aumentar zoom">+</button>
+        </div>
+      </div>
+      
+      <!-- Legenda -->
       <div class="legend">
         <div class="legend-item">
           <div class="legend-color tarefa"></div>
-          <span>Tarefa Principal</span>
+          <span>Principal</span>
         </div>
         <div class="legend-item">
           <div class="legend-color subtarefa"></div>
-          <span>Subtarefa</span>
+          <span>Sub</span>
         </div>
       </div>
       
+      <!-- Estatísticas -->
       <div class="header-stats">
         <div class="stat-item">
           <div class="stat-number" id="total-tasks">--</div>
@@ -51,37 +67,46 @@
     </div>
   </div>
 
+  <!-- CONTAINER PRINCIPAL -->
   <div class="container">
+    <!-- Navegação ultra compacta -->
     <nav class="nav-tabs">
       <button class="nav-tab active" data-tab="tarefas">🔨 Tarefas</button>
       <button class="nav-tab" data-tab="projetos" disabled>📋 Projetos</button>
       <button class="nav-tab" data-tab="kanban" disabled>📊 Kanban</button>
     </nav>
 
+    <!-- Conteúdo das abas -->
     <div class="tab-content">
       <!-- Aba Tarefas -->
       <div class="tab-pane active" id="tarefas">
+        <!-- Filtros ultra compactos -->
         <div class="filters-section">
           <div class="filters-title">Filtros</div>
           <div class="filter-group">
             <div class="filter-item">
               <label class="filter-label">Cliente:</label>
               <select class="filter-select" id="clientFilter">
-                <option value="">Todos os clientes</option>
+                <option value="">Todos</option>
               </select>
             </div>
             <div class="filter-item">
               <label class="filter-label">Responsável:</label>
               <select class="filter-select" id="ownerFilter">
-                <option value="">Todos os responsáveis</option>
+                <option value="">Todos</option>
               </select>
             </div>
           </div>
         </div>
 
+        <!-- Estados de carregamento e erro -->
         <div id="error-message" class="error" style="display: none;"></div>
         <div id="loading" class="loading">Carregando dados...</div>
+        
+        <!-- Container do Gantt - ALTURA MÁXIMA -->
         <div id="gantt-container" class="gantt-container" style="display: none;"></div>
+        
+        <!-- Estado vazio -->
         <div id="empty-state" class="empty-state" style="display: none;">
           <h3>Nenhuma tarefa encontrada</h3>
           <p>Não há tarefas para os filtros selecionados.</p>

@@ -1,14 +1,12 @@
 /**
- * Dashboard de Tarefas - Suno
+ * Dashboard de Tarefas - Suno United Creators
  * 
- * Correções implementadas:
- * - Consolidação de dados por TaskID para evitar duplicatas
- * - IDs únicos garantidos para o vis-timeline
- * - Filtros por cliente e responsável
- * - Tratamento robusto de datas inválidas
- * - Logs detalhados para debug
- * - Otimizações para largura total da tela
- * - CORREÇÃO: Timeline agora ocupa toda altura disponível
+ * Funcionalidades implementadas:
+ * - Layout otimizado para foco no Gantt
+ * - Controles de zoom temporal (+/-)
+ * - Visualização inicial na semana atual
+ * - Barras fixas (não movíveis)
+ * - Design moderno da Suno
  */
 
 // Gerenciamento de abas
@@ -30,47 +28,308 @@ function initTabs() {
   });
 }
 
+// Variáveis globais
 let timeline = null;
 let allData = [];
 let filteredData = [];
+let currentZoomLevel = 2; // 0=Horas, 1=Dias, 2=Semanas, 3=Meses
+
+const zoomLevels = [
+  { name: 'Horas', scale: 'hour', step: 4 },
+  { name: 'Dias', scale: 'day', step: 1 },
+  { name: 'Semanas', scale: 'week', step: 1 },
+  { name: 'Meses', scale: 'month', step: 1 }
+];
+
+// Dados de exemplo para teste (caso o arquivo JSON não carregue)
+const exemplosDados = [
+  {
+    TaskID: "TASK001",
+    TaskTitle: "Criação de Logo Institucional",
+    ClientNickname: "Empresa Alpha",
+    TaskOwnerDisplayName: "João Silva",
+    TaskOwnerUserFunctionTitle: "Designer Gráfico",
+    RequestTypeName: "Design Gráfico",
+    TaskCreationDate: "2025-06-27T09:00:00",
+    CurrentDueDate: "2025-07-05T17:00:00",
+    PipelineStepTitle: "Em Produção",
+    ParentTaskID: null,
+    JobNumber: "JOB001",
+    ModificationDate: "2025-06-27T14:30:00"
+  },
+  {
+    TaskID: "TASK002",
+    TaskTitle: "Revisão de Conceito - Logo",
+    ClientNickname: "Empresa Alpha",
+    TaskOwnerDisplayName: "João Silva",
+    TaskOwnerUserFunctionTitle: "Designer Gráfico",
+    RequestTypeName: "Design Gráfico",
+    TaskCreationDate: "2025-06-28T10:00:00",
+    CurrentDueDate: "2025-06-30T16:00:00",
+    PipelineStepTitle: "Revisão",
+    ParentTaskID: "TASK001",
+    JobNumber: "JOB001",
+    ModificationDate: "2025-06-27T11:00:00"
+  },
+  {
+    TaskID: "TASK003",
+    TaskTitle: "Desenvolvimento Website Corporativo",
+    ClientNickname: "Empresa Beta",
+    TaskOwnerDisplayName: "Maria Santos",
+    TaskOwnerUserFunctionTitle: "Desenvolvedora Front-end",
+    RequestTypeName: "Desenvolvimento Web",
+    TaskCreationDate: "2025-06-25T08:00:00",
+    CurrentDueDate: "2025-07-15T18:00:00",
+    PipelineStepTitle: "Em Desenvolvimento",
+    ParentTaskID: null,
+    JobNumber: "JOB002",
+    ModificationDate: "2025-06-27T09:15:00"
+  },
+  {
+    TaskID: "TASK004",
+    TaskTitle: "Estrutura HTML Base",
+    ClientNickname: "Empresa Beta",
+    TaskOwnerDisplayName: "Maria Santos",
+    TaskOwnerUserFunctionTitle: "Desenvolvedora Front-end",
+    RequestTypeName: "Desenvolvimento Web",
+    TaskCreationDate: "2025-06-26T09:00:00",
+    CurrentDueDate: "2025-06-29T17:00:00",
+    PipelineStepTitle: "Concluído",
+    ParentTaskID: "TASK003",
+    JobNumber: "JOB002",
+    ModificationDate: "2025-06-27T16:00:00"
+  },
+  {
+    TaskID: "TASK005",
+    TaskTitle: "Criação de Mockups Mobile",
+    ClientNickname: "Startup Gamma",
+    TaskOwnerDisplayName: "Pedro Costa",
+    TaskOwnerUserFunctionTitle: "UI/UX Designer",
+    RequestTypeName: "Design UI/UX",
+    TaskCreationDate: "2025-06-27T09:30:00",
+    CurrentDueDate: "2025-07-08T17:30:00",
+    PipelineStepTitle: "Iniciado",
+    ParentTaskID: null,
+    JobNumber: "JOB003",
+    ModificationDate: "2025-06-27T16:45:00"
+  },
+  {
+    TaskID: "TASK006",
+    TaskTitle: "Pesquisa de Usuário",
+    ClientNickname: "Startup Gamma",
+    TaskOwnerDisplayName: "Pedro Costa",
+    TaskOwnerUserFunctionTitle: "UI/UX Designer",
+    RequestTypeName: "Design UI/UX",
+    TaskCreationDate: "2025-06-28T10:00:00",
+    CurrentDueDate: "2025-07-02T15:00:00",
+    PipelineStepTitle: "Em Análise",
+    ParentTaskID: "TASK005",
+    JobNumber: "JOB003",
+    ModificationDate: "2025-06-27T14:20:00"
+  },
+  {
+    TaskID: "TASK007",
+    TaskTitle: "Campanha Publicitária Digital",
+    ClientNickname: "E-commerce Delta",
+    TaskOwnerDisplayName: "Ana Oliveira",
+    TaskOwnerUserFunctionTitle: "Especialista em Marketing",
+    RequestTypeName: "Marketing Digital",
+    TaskCreationDate: "2025-06-26T11:00:00",
+    CurrentDueDate: "2025-07-10T19:00:00",
+    PipelineStepTitle: "Planejamento",
+    ParentTaskID: null,
+    JobNumber: "JOB004",
+    ModificationDate: "2025-06-27T10:30:00"
+  },
+  {
+    TaskID: "TASK008",
+    TaskTitle: "Criação de Posts Redes Sociais",
+    ClientNickname: "E-commerce Delta",
+    TaskOwnerDisplayName: "João Silva",
+    TaskOwnerUserFunctionTitle: "Designer Gráfico",
+    RequestTypeName: "Design Gráfico",
+    TaskCreationDate: "2025-06-27T14:00:00",
+    CurrentDueDate: "2025-07-03T16:00:00",
+    PipelineStepTitle: "Em Produção",
+    ParentTaskID: "TASK007",
+    JobNumber: "JOB004",
+    ModificationDate: "2025-06-27T13:15:00"
+  },
+  {
+    TaskID: "TASK009",
+    TaskTitle: "Análise de Concorrência",
+    ClientNickname: "Consultoria Epsilon",
+    TaskOwnerDisplayName: "Carlos Ferreira",
+    TaskOwnerUserFunctionTitle: "Analista de Negócios",
+    RequestTypeName: "Consultoria",
+    TaskCreationDate: "2025-06-27T08:00:00",
+    CurrentDueDate: "2025-07-01T18:00:00",
+    PipelineStepTitle: "Em Andamento",
+    ParentTaskID: null,
+    JobNumber: "JOB005",
+    ModificationDate: "2025-06-27T17:00:00"
+  },
+  {
+    TaskID: "TASK010",
+    TaskTitle: "Relatório de Insights",
+    ClientNickname: "Consultoria Epsilon",
+    TaskOwnerDisplayName: "Carlos Ferreira",
+    TaskOwnerUserFunctionTitle: "Analista de Negócios",
+    RequestTypeName: "Consultoria",
+    TaskCreationDate: "2025-06-28T09:00:00",
+    CurrentDueDate: "2025-07-04T17:00:00",
+    PipelineStepTitle: "Planejado",
+    ParentTaskID: "TASK009",
+    JobNumber: "JOB005",
+    ModificationDate: "2025-06-27T15:45:00"
+  },
+  {
+    TaskID: "TASK011",
+    TaskTitle: "Design de Apresentação",
+    ClientNickname: "Startup Gamma",
+    TaskOwnerDisplayName: "Luiza Almeida",
+    TaskOwnerUserFunctionTitle: "Designer Gráfico",
+    RequestTypeName: "Design Gráfico",
+    TaskCreationDate: "2025-06-26T10:30:00",
+    CurrentDueDate: "2025-06-30T16:00:00",
+    PipelineStepTitle: "Revisão",
+    ParentTaskID: null,
+    JobNumber: "JOB006",
+    ModificationDate: "2025-06-27T12:00:00"
+  },
+  {
+    TaskID: "TASK012",
+    TaskTitle: "Otimização de Performance",
+    ClientNickname: "Empresa Beta",
+    TaskOwnerDisplayName: "Ricardo Souza",
+    TaskOwnerUserFunctionTitle: "Desenvolvedor Back-end",
+    RequestTypeName: "Desenvolvimento Web",
+    TaskCreationDate: "2025-06-27T11:00:00",
+    CurrentDueDate: "2025-07-06T15:00:00",
+    PipelineStepTitle: "Iniciado",
+    ParentTaskID: null,
+    JobNumber: "JOB007",
+    ModificationDate: "2025-06-27T14:00:00"
+  }
+];
+
+// Inicializar controles de zoom
+function initZoomControls() {
+  const zoomInBtn = document.getElementById('zoom-in');
+  const zoomOutBtn = document.getElementById('zoom-out');
+  const currentViewSpan = document.getElementById('current-view');
+  
+  // Atualizar display do zoom atual
+  function updateZoomDisplay() {
+    currentViewSpan.textContent = zoomLevels[currentZoomLevel].name;
+  }
+  
+  // Zoom in (mais detalhado)
+  zoomInBtn.addEventListener('click', () => {
+    if (currentZoomLevel > 0) {
+      currentZoomLevel--;
+      updateZoomDisplay();
+      updateTimelineZoom();
+      console.log(`🔍 Zoom in: ${zoomLevels[currentZoomLevel].name}`);
+    }
+  });
+  
+  // Zoom out (menos detalhado)
+  zoomOutBtn.addEventListener('click', () => {
+    if (currentZoomLevel < zoomLevels.length - 1) {
+      currentZoomLevel++;
+      updateZoomDisplay();
+      updateTimelineZoom();
+      console.log(`🔍 Zoom out: ${zoomLevels[currentZoomLevel].name}`);
+    }
+  });
+  
+  // Inicializar display
+  updateZoomDisplay();
+}
+
+// Atualizar zoom do timeline
+function updateTimelineZoom() {
+  if (!timeline) return;
+  
+  const currentLevel = zoomLevels[currentZoomLevel];
+  const now = new Date();
+  
+  let start, end;
+  
+  switch (currentLevel.scale) {
+    case 'hour':
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() - 12);
+      end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 12);
+      break;
+    case 'day':
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+      end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7);
+      break;
+    case 'week':
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 14);
+      end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 14);
+      break;
+    case 'month':
+      start = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+      end = new Date(now.getFullYear(), now.getMonth() + 3, 1);
+      break;
+  }
+  
+  timeline.setWindow(start, end);
+}
+
+// Calcular semana atual para visualização inicial
+function getCurrentWeekRange() {
+  const now = new Date();
+  const startOfWeek = new Date(now);
+  const endOfWeek = new Date(now);
+  
+  // Início da semana (segunda-feira)
+  const dayOfWeek = now.getDay();
+  const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+  startOfWeek.setDate(now.getDate() - daysToMonday - 7); // 1 semana antes
+  
+  // Fim da semana (domingo) + 2 semanas
+  endOfWeek.setDate(startOfWeek.getDate() + 28); // 4 semanas totais
+  
+  return { start: startOfWeek, end: endOfWeek };
+}
 
 async function loadData() {
   try {
-    console.log('Carregando dados...');
-    const response = await fetch('./dados/dados.json');
+    console.log('🚀 Carregando dados...');
     
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    // Tentar carregar dados do arquivo
+    try {
+      const response = await fetch('./dados/dados.json');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const text = await response.text();
+      allData = JSON.parse(text);
+      console.log('✅ Dados carregados do arquivo JSON:', allData.length, 'registros');
+      
+    } catch (fetchError) {
+      console.warn('⚠️ Arquivo JSON não encontrado, usando dados de exemplo...');
+      allData = exemplosDados;
+      console.log('📋 Dados de exemplo carregados:', allData.length, 'registros');
     }
     
-    const text = await response.text();
-    console.log('Dados carregados (primeiros 500 chars):', text.substring(0, 500));
-    
-    allData = JSON.parse(text);
-    console.log('Total de registros carregados:', allData.length);
-    
-    // Análise de duplicatas
+    // Análise de dados
     const taskIds = allData.map(item => item.TaskID).filter(Boolean);
     const uniqueTaskIds = [...new Set(taskIds)];
-    console.log(`TaskIDs únicos: ${uniqueTaskIds.length} de ${taskIds.length} registros`);
-    
-    if (taskIds.length !== uniqueTaskIds.length) {
-      console.warn(`⚠️ Encontradas ${taskIds.length - uniqueTaskIds.length} duplicatas de TaskID`);
-      
-      // Mostrar alguns exemplos de duplicatas
-      const duplicates = taskIds.filter((id, index) => taskIds.indexOf(id) !== index);
-      const uniqueDuplicates = [...new Set(duplicates)].slice(0, 5);
-      console.log('Exemplos de TaskIDs duplicados:', uniqueDuplicates);
-    }
-    
-    console.log('Primeiro registro:', allData[0]);
+    console.log(`📊 TaskIDs únicos: ${uniqueTaskIds.length} de ${taskIds.length} registros`);
     
     populateFilters();
     updateStats();
     filterAndRenderData();
+    
   } catch (error) {
-    console.error('Erro ao carregar dados:', error);
-    showError(`Erro ao carregar os dados: ${error.message}. Verifique se o arquivo dados.json existe no diretório 'dados/' e está acessível.`);
+    console.error('❌ Erro ao carregar dados:', error);
+    showError(`Erro ao carregar os dados: ${error.message}`);
   }
 }
 
@@ -79,7 +338,7 @@ function populateFilters() {
   const clientFilter = document.getElementById('clientFilter');
   const clients = [...new Set(allData.map(item => item.ClientNickname))].filter(Boolean).sort();
 
-  clientFilter.innerHTML = '<option value="">Todos os clientes</option>';
+  clientFilter.innerHTML = '<option value="">Todos</option>';
   clients.forEach(client => {
     const option = document.createElement('option');
     option.value = client;
@@ -91,7 +350,7 @@ function populateFilters() {
   const ownerFilter = document.getElementById('ownerFilter');
   const owners = [...new Set(allData.map(item => item.TaskOwnerDisplayName))].filter(Boolean).sort();
 
-  ownerFilter.innerHTML = '<option value="">Todos os responsáveis</option>';
+  ownerFilter.innerHTML = '<option value="">Todos</option>';
   owners.forEach(owner => {
     const option = document.createElement('option');
     option.value = owner;
@@ -140,7 +399,7 @@ function filterAndRenderData() {
     }
   });
 
-  console.log(`Dados filtrados: ${filteredData.length} registros (${uniqueFilteredTasks.size} tarefas únicas)`);
+  console.log(`🔍 Dados filtrados: ${filteredData.length} registros (${uniqueFilteredTasks.size} tarefas únicas)`);
   renderGanttChart();
 }
 
@@ -171,7 +430,7 @@ function renderGanttChart() {
         className: 'group-label'
       }));
 
-    console.log('Grupos criados:', groups.length);
+    console.log('👥 Grupos criados:', groups.length);
 
     // Consolidar dados por TaskID para evitar duplicatas
     const taskMap = new Map();
@@ -182,7 +441,7 @@ function renderGanttChart() {
       if (!taskMap.has(taskId)) {
         taskMap.set(taskId, item);
       } else {
-        // Se já existe, manter o item mais recente (baseado na data de modificação)
+        // Se já existe, manter o item mais recente
         const existing = taskMap.get(taskId);
         const existingModDate = new Date(existing.ModificationDate || existing.TaskCreationDate);
         const currentModDate = new Date(item.ModificationDate || item.TaskCreationDate);
@@ -193,7 +452,7 @@ function renderGanttChart() {
       }
     });
 
-    console.log(`Dados consolidados: ${filteredData.length} registros → ${taskMap.size} tarefas únicas`);
+    console.log(`📋 Dados consolidados: ${filteredData.length} registros → ${taskMap.size} tarefas únicas`);
 
     // Criar items (tarefas) a partir dos dados consolidados
     const items = [];
@@ -216,12 +475,12 @@ function renderGanttChart() {
           
           // Verificar se as datas são válidas
           if (isNaN(startDate.getTime())) {
-            console.warn('Data de início inválida para tarefa:', taskId);
+            console.warn('⚠️ Data de início inválida para tarefa:', taskId);
             startDate = new Date(); // usar data atual como fallback
           }
           
           if (isNaN(endDate.getTime())) {
-            console.warn('Data de fim inválida para tarefa:', taskId);
+            console.warn('⚠️ Data de fim inválida para tarefa:', taskId);
             endDate = new Date(startDate.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7 dias após início
           }
           
@@ -230,7 +489,7 @@ function renderGanttChart() {
             endDate = new Date(startDate.getTime() + (24 * 60 * 60 * 1000)); // 1 dia após início
           }
         } catch (dateError) {
-          console.error('Erro ao processar datas para tarefa:', taskId, dateError);
+          console.error('❌ Erro ao processar datas para tarefa:', taskId, dateError);
           startDate = new Date();
           endDate = new Date(startDate.getTime() + (7 * 24 * 60 * 60 * 1000));
         }
@@ -258,34 +517,23 @@ function renderGanttChart() {
         itemCounter++;
         
       } catch (itemError) {
-        console.error(`Erro ao processar item ${taskId}:`, itemError, item);
+        console.error(`❌ Erro ao processar item ${taskId}:`, itemError, item);
       }
     });
 
-    console.log('Total de items criados:', items.length);
+    console.log('📊 Total de items criados:', items.length);
 
     if (items.length === 0) {
       throw new Error('Nenhum item válido foi criado a partir dos dados');
     }
 
-    // Verificar se há IDs duplicados (debug)
-    const ids = items.map(item => item.id);
-    const duplicateIds = ids.filter((id, index) => ids.indexOf(id) !== index);
-    if (duplicateIds.length > 0) {
-      console.warn('IDs duplicados encontrados:', duplicateIds);
-    }
+    // Obter range da semana atual
+    const weekRange = getCurrentWeekRange();
 
-    // Calcular altura dinâmica baseada no número de grupos
-    const containerHeight = container.offsetHeight;
-    const minItemHeight = 35; // altura mínima por linha
-    const calculatedHeight = Math.max(containerHeight, groups.length * minItemHeight + 100);
-
-    console.log(`Container height: ${containerHeight}px, Calculated height: ${calculatedHeight}px, Groups: ${groups.length}`);
-
-    // Opções do timeline - CORRIGIDAS para ocupar altura total
+    // ========== OPÇÕES DO VIS-TIMELINE - MÁXIMA DENSIDADE ==========
     const options = {
       width: '100%',
-      height: containerHeight + 'px', // Usar altura exata do container
+      height: '100%',
       orientation: 'top',
       showMajorLabels: true,
       showMinorLabels: true,
@@ -293,32 +541,48 @@ function renderGanttChart() {
       moveable: true,
       stack: true,
       showTooltips: true,
+      // ✅ CONFIGURAÇÕES ANTI-MOVIMENTO
+      editable: {
+        add: false,
+        updateTime: false,
+        updateGroup: false,
+        remove: false,
+        overrideItems: false
+      },
+      selectable: true,
+      multiselect: false,
+      // ✅ MÁXIMA DENSIDADE - MAIS LINHAS
+      itemsAlwaysDraggable: false,
       tooltip: {
         followMouse: true,
         overflowMethod: 'cap'
       },
       margin: {
-        item: { horizontal: 8, vertical: 2 },
-        axis: 20
+        item: { horizontal: 2, vertical: 0 }, // ✅ MARGENS MÍNIMAS
+        axis: 15 // ✅ EIXO MENOR
       },
-      locale: 'pt-BR',
+      // ✅ ALTURA DOS ITENS REDUZIDA
+      maxHeight: '100%',
+      minHeight: '100%',
+      groupHeightMode: 'fixed',
+      groupHeight: 22, // ✅ ALTURA FIXA MENOR = MAIS LINHAS
       format: {
         minorLabels: {
           millisecond:'SSS',
           second:     's',
           minute:     'HH:mm',
           hour:       'HH:mm',
-          weekday:    'ddd D',
-          day:        'D',
+          weekday:    'ddd DD',
+          day:        'DD',
           week:       'w',
           month:      'MMM',
           year:       'YYYY'
         },
         majorLabels: {
           millisecond:'HH:mm:ss',
-          second:     'D MMMM HH:mm',
-          minute:     'ddd D MMMM',
-          hour:       'ddd D MMMM',
+          second:     'DD MMMM HH:mm',
+          minute:     'ddd DD MMMM',
+          hour:       'ddd DD MMMM',
           weekday:    'MMMM YYYY',
           day:        'MMMM YYYY',
           week:       'MMMM YYYY',
@@ -328,39 +592,63 @@ function renderGanttChart() {
       },
       horizontalScroll: true,
       verticalScroll: true,
-      autoResize: false, // Desabilitado para controle manual
-      maxHeight: containerHeight, // Altura máxima = altura do container
-      minHeight: containerHeight, // Altura mínima = altura do container
-      fit: false, // Não ajustar automaticamente o zoom
-      start: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1), // Início: mês passado
-      end: new Date(new Date().getFullYear(), new Date().getMonth() + 2, 1) // Fim: 2 meses à frente
+      showCurrentTime: true,
+      // ✅ FOCO NA SEMANA ATUAL
+      start: weekRange.start,
+      end: weekRange.end
     };
 
     // Destruir timeline anterior se existir
     if (timeline) {
-      timeline.destroy();
+      try {
+        timeline.destroy();
+      } catch (destroyError) {
+        console.warn('⚠️ Erro ao destruir timeline anterior:', destroyError);
+      }
       timeline = null;
     }
 
     // Criar novo timeline
+    console.log('🚀 Criando timeline...');
     timeline = new vis.Timeline(container, items, groups, options);
 
     // Event listeners
     timeline.on('select', function (properties) {
-      console.log('Item selecionado:', properties.items);
+      console.log('🎯 Item selecionado:', properties.items);
     });
 
     timeline.on('doubleClick', function (properties) {
-      console.log('Double click:', properties);
+      console.log('👆 Double click:', properties);
     });
 
-    // Forçar redimensionamento após criação
-    timeline.on('changed', function () {
-      // Força o timeline a ocupar toda a altura disponível
-      const visContainer = container.querySelector('.vis-timeline');
-      if (visContainer) {
-        visContainer.style.height = '100%';
+    // ✅ PREVENIR COMPLETAMENTE O MOVIMENTO DAS BARRAS
+    timeline.on('click', function (properties) {
+      if (properties.item) {
+        timeline.setSelection(properties.item);
       }
+    });
+
+    // ✅ BLOQUEAR TODOS OS TIPOS DE EDIÇÃO
+    timeline.on('itemover', function (properties) {
+      // Bloquear cursor de redimensionamento
+      const item = timeline.itemsData.get(properties.item);
+      if (item) {
+        properties.event.preventDefault();
+      }
+    });
+
+    // ✅ PREVENIR DRAG & DROP
+    timeline.on('mouseDown', function (properties) {
+      if (properties.item) {
+        properties.event.preventDefault();
+        timeline.setSelection(properties.item);
+      }
+    });
+
+    // ✅ PREVENIR QUALQUER TENTATIVA DE EDIÇÃO
+    timeline.on('changed', function () {
+      // Força as barras a permanecerem nas posições originais
+      timeline.redraw();
     });
 
     // Mostrar container
@@ -368,30 +656,10 @@ function renderGanttChart() {
     emptyState.style.display = 'none';
     container.style.display = 'block';
     
-    console.log('Timeline criado com sucesso');
-
-    // Aplicar estilos forçados após criação
-    setTimeout(() => {
-      if (timeline) {
-        // Forçar altura 100% em todos os elementos internos do vis-timeline
-        const visElements = container.querySelectorAll('.vis-timeline, .vis-panel, .vis-content');
-        visElements.forEach(el => {
-          el.style.height = '100%';
-        });
-        
-        // Remover altura fixa do background que causa o espaço em branco
-        const backgroundPanel = container.querySelector('.vis-panel.vis-background');
-        if (backgroundPanel) {
-          backgroundPanel.style.height = '100%';
-        }
-        
-        timeline.redraw();
-        console.log('Timeline redimensionado para ocupar altura total');
-      }
-    }, 100);
+    console.log('✅ Timeline criado! 🎯 Foco na semana atual - Máxima densidade!');
 
   } catch (error) {
-    console.error('Erro ao criar timeline:', error);
+    console.error('❌ Erro ao criar timeline:', error);
     showError(`Erro ao renderizar o gráfico: ${error.message}`);
   }
 }
@@ -407,110 +675,55 @@ function showError(message) {
   container.style.display = 'none';
 }
 
-// Redimensionar timeline quando a janela for redimensionada
-function handleResize() {
-  if (timeline) {
-    const container = document.getElementById('gantt-container');
-    const containerHeight = container.offsetHeight;
-    
-    // Atualizar altura do timeline
-    timeline.setOptions({
-      height: containerHeight + 'px',
-      maxHeight: containerHeight,
-      minHeight: containerHeight
-    });
-    
-    // Forçar altura 100% nos elementos internos
-    setTimeout(() => {
-      const visElements = container.querySelectorAll('.vis-timeline, .vis-panel, .vis-content');
-      visElements.forEach(el => {
-        el.style.height = '100%';
-      });
-      
-      const backgroundPanel = container.querySelector('.vis-panel.vis-background');
-      if (backgroundPanel) {
-        backgroundPanel.style.height = '100%';
-      }
-      
-      timeline.redraw();
-    }, 50);
-  }
-}
-
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM carregado, inicializando aplicação...');
+  console.log('🚀 Suno Dashboard inicializando...');
   initTabs();
+  initZoomControls();
   loadData();
-  
-  // Listener para redimensionamento
-  window.addEventListener('resize', handleResize);
 });
 
 // Cleanup ao sair da página
 window.addEventListener('beforeunload', () => {
   if (timeline) {
-    timeline.destroy();
+    try {
+      timeline.destroy();
+    } catch (error) {
+      console.warn('⚠️ Erro ao destruir timeline:', error);
+    }
     timeline = null;
   }
-  window.removeEventListener('resize', handleResize);
 });
 
-// Funções de debug úteis (disponíveis no console)
-window.debugDashboard = {
-  // Verificar dados carregados
+// ========== FUNÇÕES DE DEBUG ==========
+window.sunoDebug = {
   getData: () => allData,
   getFilteredData: () => filteredData,
+  getTimeline: () => timeline,
+  getCurrentZoom: () => zoomLevels[currentZoomLevel],
   
-  // Forçar redimensionamento do timeline
-  resizeTimeline: () => {
-    if (timeline) {
-      handleResize();
-      console.log('Timeline redimensionado forçadamente');
-    } else {
-      console.log('Timeline não inicializado');
-    }
+  // Forçar recriação do timeline
+  recreateTimeline: () => {
+    console.log('🔄 Recriando timeline...');
+    renderGanttChart();
   },
   
-  // Corrigir altura do timeline
-  fixTimelineHeight: () => {
-    if (timeline) {
-      const container = document.getElementById('gantt-container');
-      const visElements = container.querySelectorAll('.vis-timeline, .vis-panel, .vis-content, .vis-panel.vis-background');
-      visElements.forEach(el => {
-        el.style.height = '100%';
-        el.style.minHeight = '100%';
-      });
-      timeline.redraw();
-      console.log('Altura do timeline corrigida');
-    } else {
-      console.log('Timeline não inicializado');
-    }
+  // Testar com dados de exemplo
+  useExampleData: () => {
+    console.log('📋 Carregando dados de exemplo...');
+    allData = exemplosDados;
+    populateFilters();
+    updateStats();
+    filterAndRenderData();
   },
   
-  // Analisar duplicatas
-  findDuplicates: () => {
-    const taskIds = allData.map(item => item.TaskID).filter(Boolean);
-    const duplicates = {};
-    
-    taskIds.forEach(id => {
-      duplicates[id] = (duplicates[id] || 0) + 1;
-    });
-    
-    const duplicateIds = Object.keys(duplicates).filter(id => duplicates[id] > 1);
-    console.log('TaskIDs com duplicatas:', duplicateIds.length);
-    
-    duplicateIds.forEach(id => {
-      console.log(`TaskID ${id}: ${duplicates[id]} ocorrências`);
-      const items = allData.filter(item => item.TaskID === id);
-      console.table(items.map(item => ({
-        TaskTitle: item.TaskTitle,
-        ModificationDate: item.ModificationDate,
-        PipelineStepTitle: item.PipelineStepTitle
-      })));
-    });
-    
-    return duplicateIds;
+  // Focar na semana atual
+  focusCurrentWeek: () => {
+    if (timeline) {
+      const weekRange = getCurrentWeekRange();
+      timeline.setWindow(weekRange.start, weekRange.end);
+      console.log('📅 Foco na semana atual aplicado');
+    }
   },
   
   // Estatísticas gerais
@@ -525,10 +738,14 @@ window.debugDashboard = {
       uniqueTasks: uniqueTasks.size,
       duplicates: allData.length - uniqueTasks.size,
       clients: [...new Set(allData.map(item => item.ClientNickname))].filter(Boolean).length,
-      owners: [...new Set(allData.map(item => item.TaskOwnerDisplayName))].filter(Boolean).length
+      owners: [...new Set(allData.map(item => item.TaskOwnerDisplayName))].filter(Boolean).length,
+      hasTimeline: !!timeline,
+      currentZoom: zoomLevels[currentZoomLevel].name
     };
   }
 };
 
-console.log('🔧 Debug: Use window.debugDashboard no console para análise dos dados');
-console.log('🔧 Debug: Use window.debugDashboard.fixTimelineHeight() para corrigir altura se necessário');
+console.log('🎨 Suno United Creators Dashboard - ULTRA DENSO carregado!');
+console.log('🔧 Debug: window.sunoDebug para análise');
+console.log('🔧 Teste: window.sunoDebug.useExampleData()');
+console.log('🔧 Foco: window.sunoDebug.focusCurrentWeek()');
