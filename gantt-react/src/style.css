@@ -1,0 +1,68 @@
+/* Estilos do Frappe Gantt */
+.gantt-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.gantt .bar-wrapper {
+  cursor: default !important;
+}
+
+.gantt .bar-wrapper.tarefa .bar {
+  fill: #4a90e2 !important;
+  stroke: #2171c7;
+}
+
+.gantt .bar-wrapper.subtarefa .bar {
+  fill: #67c23a !important;
+  stroke: #4a9e1f;
+}
+
+.gantt .bar-wrapper:hover .bar {
+  fill-opacity: 0.8;
+}
+
+.gantt .bar-label {
+  fill: #333;
+  dominant-baseline: central;
+  text-anchor: start;
+  font-size: 12px;
+}
+
+.gantt .lower-text {
+  font-size: 10px;
+  fill: #666;
+}
+
+.gantt .today-highlight {
+  fill: #fcf8e3;
+  opacity: 0.5;
+}
+
+.gantt .arrow {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5;
+}
+
+.details-container {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.details-container h4 {
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.details-container p {
+  margin: 4px 0;
+  color: #666;
+}
+
+.details-container strong {
+  color: #333;
+} 

@@ -5,7 +5,7 @@
  * - Layout otimizado para foco no Gantt
  * - Controles de zoom temporal (+/-)
  * - Visualização inicial na semana atual
- * - Barras fixas (não movíveis)
+ * - Barras COMPLETAMENTE FIXAS (não movíveis)
  * - Design moderno da Suno
  */
 
@@ -67,7 +67,7 @@ const exemplosDados = [
     TaskCreationDate: "2025-06-28T10:00:00",
     CurrentDueDate: "2025-06-30T16:00:00",
     PipelineStepTitle: "Revisão",
-    ParentTaskID: "TASK001",
+    ParentTaskID: "TASK001", // ✅ SUBTAREFA
     JobNumber: "JOB001",
     ModificationDate: "2025-06-27T11:00:00"
   },
@@ -95,7 +95,7 @@ const exemplosDados = [
     TaskCreationDate: "2025-06-26T09:00:00",
     CurrentDueDate: "2025-06-29T17:00:00",
     PipelineStepTitle: "Concluído",
-    ParentTaskID: "TASK003",
+    ParentTaskID: "TASK003", // ✅ SUBTAREFA
     JobNumber: "JOB002",
     ModificationDate: "2025-06-27T16:00:00"
   },
@@ -123,7 +123,7 @@ const exemplosDados = [
     TaskCreationDate: "2025-06-28T10:00:00",
     CurrentDueDate: "2025-07-02T15:00:00",
     PipelineStepTitle: "Em Análise",
-    ParentTaskID: "TASK005",
+    ParentTaskID: "TASK005", // ✅ SUBTAREFA
     JobNumber: "JOB003",
     ModificationDate: "2025-06-27T14:20:00"
   },
@@ -151,7 +151,7 @@ const exemplosDados = [
     TaskCreationDate: "2025-06-27T14:00:00",
     CurrentDueDate: "2025-07-03T16:00:00",
     PipelineStepTitle: "Em Produção",
-    ParentTaskID: "TASK007",
+    ParentTaskID: "TASK007", // ✅ SUBTAREFA
     JobNumber: "JOB004",
     ModificationDate: "2025-06-27T13:15:00"
   },
@@ -179,37 +179,9 @@ const exemplosDados = [
     TaskCreationDate: "2025-06-28T09:00:00",
     CurrentDueDate: "2025-07-04T17:00:00",
     PipelineStepTitle: "Planejado",
-    ParentTaskID: "TASK009",
+    ParentTaskID: "TASK009", // ✅ SUBTAREFA
     JobNumber: "JOB005",
     ModificationDate: "2025-06-27T15:45:00"
-  },
-  {
-    TaskID: "TASK011",
-    TaskTitle: "Design de Apresentação",
-    ClientNickname: "Startup Gamma",
-    TaskOwnerDisplayName: "Luiza Almeida",
-    TaskOwnerUserFunctionTitle: "Designer Gráfico",
-    RequestTypeName: "Design Gráfico",
-    TaskCreationDate: "2025-06-26T10:30:00",
-    CurrentDueDate: "2025-06-30T16:00:00",
-    PipelineStepTitle: "Revisão",
-    ParentTaskID: null,
-    JobNumber: "JOB006",
-    ModificationDate: "2025-06-27T12:00:00"
-  },
-  {
-    TaskID: "TASK012",
-    TaskTitle: "Otimização de Performance",
-    ClientNickname: "Empresa Beta",
-    TaskOwnerDisplayName: "Ricardo Souza",
-    TaskOwnerUserFunctionTitle: "Desenvolvedor Back-end",
-    RequestTypeName: "Desenvolvimento Web",
-    TaskCreationDate: "2025-06-27T11:00:00",
-    CurrentDueDate: "2025-07-06T15:00:00",
-    PipelineStepTitle: "Iniciado",
-    ParentTaskID: null,
-    JobNumber: "JOB007",
-    ModificationDate: "2025-06-27T14:00:00"
   }
 ];
 
@@ -462,13 +434,17 @@ function renderGanttChart() {
       try {
         // Criar ID único garantido
         const uniqueId = `item-${itemCounter}-${taskId}`;
+        
+        // ✅ VERIFICAÇÃO CORRETA DE SUBTAREFA
         const isSubtask = item.ParentTaskID && 
-                 item.ParentTaskID !== null && 
-                 item.ParentTaskID !== undefined && 
-                 item.ParentTaskID !== "" &&
-                 item.ParentTaskID.toString().trim() !== "";
+                         item.ParentTaskID !== null && 
+                         item.ParentTaskID !== undefined && 
+                         item.ParentTaskID !== "" &&
+                         item.ParentTaskID.toString().trim() !== "";
+        
         const className = isSubtask ? 'subtarefa' : 'tarefa';
-        const tipo = isSubtask ? 'Subtarefa' : 'Tarefa principal';
+        const tipo = isSubtask ? 'Subtarefa' : 'Tarefa Principal';
+        const prefix = isSubtask ? '├─ ' : '📋 '; // ✅ PREFIXO VISUAL
 
         // Tratar datas
         let startDate, endDate;
@@ -501,19 +477,22 @@ function renderGanttChart() {
         const taskItem = {
           id: uniqueId,
           group: item.TaskOwnerDisplayName || 'Sem responsável',
-          content: `${isSubtask ? '└─ ' : ''}${item.ClientNickname || 'N/A'} | ${item.RequestTypeName || 'N/A'} | ${item.TaskTitle || 'Sem título'}`,
+          content: `${prefix}${item.ClientNickname || 'N/A'} | ${item.RequestTypeName || 'N/A'} | ${item.TaskTitle || 'Sem título'}`,
           start: startDate,
           end: endDate,
           className: className,
           title: `
             <strong>${item.TaskTitle || 'Sem título'}</strong><br>
-            Cliente: ${item.ClientNickname || 'N/A'}<br>
-            Responsável: ${item.TaskOwnerDisplayName || 'N/A'}<br>
-            Função: ${item.TaskOwnerUserFunctionTitle || 'N/A'}<br>
-            Tipo: ${item.RequestTypeName || 'N/A'}<br>
-            Categoria: ${tipo}<br>
-            Task ID: ${taskId}<br>
-            Status: ${item.PipelineStepTitle || 'N/A'}
+            <strong>Tipo:</strong> ${tipo}<br>
+            ${isSubtask ? `<strong>Tarefa Principal:</strong> ${item.ParentTaskID}<br>` : ''}
+            <strong>Cliente:</strong> ${item.ClientNickname || 'N/A'}<br>
+            <strong>Responsável:</strong> ${item.TaskOwnerDisplayName || 'N/A'}<br>
+            <strong>Função:</strong> ${item.TaskOwnerUserFunctionTitle || 'N/A'}<br>
+            <strong>Categoria:</strong> ${item.RequestTypeName || 'N/A'}<br>
+            <strong>Task ID:</strong> ${taskId}<br>
+            <strong>Status:</strong> ${item.PipelineStepTitle || 'N/A'}<br>
+            <strong>Início:</strong> ${startDate.toLocaleDateString('pt-BR')}<br>
+            <strong>Prazo:</strong> ${endDate.toLocaleDateString('pt-BR')}
           `.trim()
         };
 
@@ -534,83 +513,94 @@ function renderGanttChart() {
     // Obter range da semana atual
     const weekRange = getCurrentWeekRange();
 
-    // ========== OPÇÕES DO VIS-TIMELINE - MÁXIMA DENSIDADE ==========
-    const options = {
-      width: '100%',
-      height: '100%',
-      orientation: 'top',
-      showMajorLabels: true,
-      showMinorLabels: true,
-      zoomable: true,
-      moveable: true,
-      stack: true,
-      showTooltips: true,
-      // ✅ CONFIGURAÇÕES ANTI-MOVIMENTO
-      editable: false,
-      selectable: true,
-      multiselect: false,
-      // ✅ MÁXIMA DENSIDADE - MAIS LINHAS
-      itemsAlwaysDraggable: false,
-      tooltip: {
-        followMouse: true,
-        overflowMethod: 'cap'
-      },
-      margin: {
-        item: { horizontal: 2, vertical: 0 }, // ✅ MARGENS MÍNIMAS
-        axis: 15 // ✅ EIXO MENOR
-      },
-      // ✅ ALTURA DOS ITENS REDUZIDA
-      maxHeight: '100%',
-      minHeight: '100%',
-      groupHeightMode: 'fixed',
-      groupHeight: 22, // ✅ ALTURA FIXA MENOR = MAIS LINHAS
-      format: {
-        minorLabels: {
-          millisecond:'SSS',
-          second:     's',
-          minute:     'HH:mm',
-          hour:       'HH:mm',
-          weekday:    'ddd DD',
-          day:        'DD',
-          week:       'w',
-          month:      'MMM',
-          year:       'YYYY'
+    // ========== OPÇÕES DO TIMELINE CENTRALIZADAS ==========
+    function getTimelineOptions(weekRange) {
+      return {
+        // Layout básico
+        width: '100%',
+        height: '100%',
+        orientation: 'top',
+        // Timeline
+        showMajorLabels: true,
+        showMinorLabels: true,
+        showCurrentTime: true,
+        // Navegação permitida
+        zoomable: true,
+        moveable: true,
+        // BARRAS FIXAS (NÃO MOVÍVEIS)
+        editable: false,                    // Desabilita toda edição
+        selectable: true,                   // Permite seleção
+        multiselect: false,                 // Seleção única
+        itemsAlwaysDraggable: false,        // Nunca arrastar
+        // Layout dos items
+        stack: true,
+        // Tooltips
+        showTooltips: true,
+        tooltip: {
+          followMouse: true,
+          overflowMethod: 'cap'
         },
-        majorLabels: {
-          millisecond:'HH:mm:ss',
-          second:     'DD MMMM HH:mm',
-          minute:     'ddd DD MMMM',
-          hour:       'ddd DD MMMM',
-          weekday:    'MMMM YYYY',
-          day:        'MMMM YYYY',
-          week:       'MMMM YYYY',
-          month:      'YYYY',
-          year:       ''
-        }
-      },
-      horizontalScroll: true,
-      verticalScroll: true,
-      showCurrentTime: true,
-      // ✅ FOCO NA SEMANA ATUAL
-      start: weekRange.start,
-      end: weekRange.end
-    };
+        // Margens e espaçamento
+        margin: {
+          item: { horizontal: 3, vertical: 1 },
+          axis: 15
+        },
+        // Altura dos grupos
+        maxHeight: '100%',
+        minHeight: '100%',
+        groupHeightMode: 'fixed',
+        groupHeight: 25,
+        // Formatação de data
+        format: {
+          minorLabels: {
+            millisecond:'SSS',
+            second:     's',
+            minute:     'HH:mm',
+            hour:       'HH:mm',
+            weekday:    'ddd DD',
+            day:        'DD',
+            week:       'w',
+            month:      'MMM',
+            year:       'YYYY'
+          },
+          majorLabels: {
+            millisecond:'HH:mm:ss',
+            second:     'DD MMMM HH:mm',
+            minute:     'ddd DD MMMM',
+            hour:       'ddd DD MMMM',
+            weekday:    'MMMM YYYY',
+            day:        'MMMM YYYY',
+            week:       'MMMM YYYY',
+            month:      'YYYY',
+            year:       ''
+          }
+        },
+        // Scroll
+        horizontalScroll: true,
+        verticalScroll: true,
+        // Janela inicial
+        start: weekRange.start,
+        end: weekRange.end
+      };
+    }
+    // ========== OPÇÕES CRÍTICAS PARA BARRAS FIXAS ==========
+    const options = getTimelineOptions(weekRange);
 
     // Destruir timeline anterior se existir
     if (timeline) {
       try {
         timeline.destroy();
+        timeline = null;
       } catch (destroyError) {
         console.warn('⚠️ Erro ao destruir timeline anterior:', destroyError);
       }
-      timeline = null;
     }
 
     // Criar novo timeline
-    console.log('🚀 Criando timeline...');
+    console.log('🚀 Criando timeline com barras FIXAS...');
     timeline = new vis.Timeline(container, items, groups, options);
 
-    // Event listeners
+    // ✅ EVENTOS BÁSICOS APENAS
     timeline.on('select', function (properties) {
       console.log('🎯 Item selecionado:', properties.items);
     });
@@ -624,7 +614,7 @@ function renderGanttChart() {
     emptyState.style.display = 'none';
     container.style.display = 'block';
     
-    console.log('✅ Timeline criado! 🎯 Foco na semana atual - Máxima densidade!');
+    console.log('✅ Timeline criado! Barras devem estar FIXAS agora!');
 
   } catch (error) {
     console.error('❌ Erro ao criar timeline:', error);
@@ -713,7 +703,7 @@ window.sunoDebug = {
   }
 };
 
-console.log('🎨 Suno United Creators Dashboard - ULTRA DENSO carregado!');
+console.log('🎨 Suno United Creators Dashboard - VERSÃO CORRIGIDA carregado!');
 console.log('🔧 Debug: window.sunoDebug para análise');
 console.log('🔧 Teste: window.sunoDebug.useExampleData()');
 console.log('🔧 Foco: window.sunoDebug.focusCurrentWeek()');

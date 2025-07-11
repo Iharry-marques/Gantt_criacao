@@ -152,37 +152,50 @@ body {
   line-height: 1.2;
 }
 
-/* Legenda ULTRA compacta */
+/* ✨ LEGENDA ELEGANTE ATUALIZADA */
 .legend {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   align-items: center;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 0.25rem; /* ✅ GAP MENOR */
-  font-size: 0.625rem; /* ✅ FONTE MENOR */
-  font-weight: 500;
-  color: var(--text-primary);
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #374151;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
 }
 
 .legend-color {
-  width: 10px; /* ✅ INDICADOR MENOR */
-  height: 10px;
-  border-radius: 2px;
+  width: 16px;
+  height: 12px;
+  border-radius: 4px;
   flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .legend-color.tarefa {
-  background: var(--suno-yellow);
-  border: 1px solid var(--suno-yellow-dark);
+  background: linear-gradient(135deg, #ffc801 0%, #ffdc4d 50%, #e6b300 100%);
+  border: 1px solid #b8860b;
+  box-shadow: 
+    0 2px 4px rgba(255, 200, 1, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .legend-color.subtarefa {
-  background: var(--text-secondary);
-  border: 1px solid var(--text-primary);
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #4f46e5 100%);
+  border: 1px solid #3730a3;
+  box-shadow: 
+    0 2px 4px rgba(99, 102, 241, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 /* Stats ULTRA compactos */
@@ -498,199 +511,428 @@ body {
   letter-spacing: 0.3px;
 }
 
-/* VIS-TIMELINE ULTRA CUSTOMIZADO - MÁXIMA DENSIDADE */
+/* ============================================
+   🚨 VIS-TIMELINE - CONFIGURAÇÕES CRÍTICAS
+   ============================================ */
+
+/* Timeline principal */
 .vis-timeline {
   font-family: 'Inter', sans-serif !important;
   border: none !important;
   height: 100% !important;
-  font-size: 11px !important; /* ✅ FONTE BASE MENOR */
+  font-size: 11px !important;
+  background: var(--bg-white) !important;
 }
 
-/* Itens do timeline - COMPACTOS */
+/* ⚠️ CONFIGURAÇÕES CRÍTICAS PARA BARRAS FIXAS */
+.vis-timeline .vis-item {
+  /* Desabilitar completamente drag & drop */
+  -webkit-user-drag: none !important;
+  -khtml-user-drag: none !important;
+  -moz-user-drag: none !important;
+  -o-user-drag: none !important;
+  user-drag: none !important;
+  
+  /* Desabilitar seleção de texto */
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  
+  /* Cursor sempre pointer, nunca resize */
+  cursor: pointer !important;
+  
+  /* Desabilitar eventos de ponteiro no conteúdo */
+  pointer-events: auto !important;
+}
+
+.vis-timeline .vis-item .vis-item-content {
+  pointer-events: none !important;
+  user-select: none !important;
+  cursor: pointer !important;
+}
+
+/* Desabilitar redimensionamento das barras */
+.vis-timeline .vis-item .vis-item-overflow,
+.vis-timeline .vis-item .vis-item-overflow-left,
+.vis-timeline .vis-item .vis-item-overflow-right {
+  cursor: pointer !important;
+  pointer-events: none !important;
+}
+
+/* ✨ TAREFAS PRINCIPAIS - Design Premium */
 .vis-item.vis-box.tarefa {
-  background: linear-gradient(135deg, var(--suno-yellow) 0%, var(--suno-yellow-dark) 100%) !important;
-  border: 2px solid var(--suno-yellow-dark) !important;
-  color: var(--text-primary) !important;
+  background: linear-gradient(135deg, #ffc801 0%, #ffdc4d 50%, #e6b300 100%) !important;
+  border: 2px solid #b8860b !important;
+  color: #000000 !important;
   font-weight: 700 !important;
-  border-radius: var(--radius-sm) !important;
-  box-shadow: 0 2px 6px rgba(255, 200, 1, 0.3) !important;
+  border-radius: 8px !important;
+  box-shadow: 
+    0 4px 12px rgba(255, 200, 1, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  font-size: 11px !important;
+  height: 24px !important;
+  line-height: 20px !important;
+  overflow: hidden !important;
+  padding: 2px 8px !important;
+  position: relative !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5) !important;
+  transition: all 0.2s ease !important;
+  
+  /* ⚠️ CRÍTICO: Desabilitar movimentação */
+  pointer-events: auto !important;
+  -webkit-user-drag: none !important;
+  user-drag: none !important;
+}
+
+/* ✨ SUBTAREFAS - Design Sofisticado */
+.vis-item.vis-box.subtarefa {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #4f46e5 100%) !important;
+  border: 1px solid #3730a3 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  box-shadow: 
+    0 3px 8px rgba(99, 102, 241, 0.3),
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
   font-size: 10px !important;
   height: 20px !important;
   line-height: 16px !important;
   overflow: hidden !important;
   padding: 2px 6px !important;
+  position: relative !important;
+  opacity: 0.95 !important;
   cursor: pointer !important;
   user-select: none !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.2s ease !important;
+  margin-left: 8px !important;
+  
+  /* ⚠️ CRÍTICO: Desabilitar movimentação */
+  pointer-events: auto !important;
+  -webkit-user-drag: none !important;
+  user-drag: none !important;
 }
-.vis-item.vis-box.subtarefa {
-  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
-  border: 1px dashed #374151 !important;
-  color: var(--bg-white) !important;
-  font-weight: 500 !important;
-  border-radius: var(--radius-sm) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
-  font-size: 9px !important;
-  height: 18px !important;
-  line-height: 14px !important;
+
+/* VIS-TIMELINE ULTRA ELEGANTE - DESIGN SUNO 2025 */
+.vis-timeline {
+  font-family: 'Inter', sans-serif !important;
+  border: none !important;
+  height: 100% !important;
+  font-size: 11px !important;
+  background: var(--bg-white) !important;
+}
+
+/* ✨ TAREFAS PRINCIPAIS - Design Premium Suno */
+.vis-item.vis-box.tarefa {
+  background: linear-gradient(135deg, #ffc801 0%, #ffdc4d 50%, #e6b300 100%) !important;
+  border: 2px solid #b8860b !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
+  box-shadow: 
+    0 4px 12px rgba(255, 200, 1, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  font-size: 11px !important;
+  height: 24px !important;
+  line-height: 20px !important;
   overflow: hidden !important;
-  padding: 2px 4px !important;
-  opacity: 0.85 !important;
+  padding: 2px 8px 2px 28px !important;
+  position: relative !important;
   cursor: pointer !important;
   user-select: none !important;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5) !important;
+  transition: all 0.2s ease !important;
 }
 
-.vis-item.vis-selected {
-  box-shadow: 0 0 0 2px rgba(255, 200, 1, 0.4) !important;
+.vis-item.vis-box.tarefa::before {
+  content: '📋' !important;
+  position: absolute !important;
+  left: 6px !important;
+  top: 3px !important;
+  font-size: 12px !important;
+  pointer-events: none !important;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2)) !important;
+}
+
+.vis-item.vis-box.tarefa::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%) !important;
+  border-radius: 6px !important;
+  pointer-events: none !important;
+}
+
+/* ✨ SUBTAREFAS - Design Sofisticado */
+.vis-item.vis-box.subtarefa {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #4f46e5 100%) !important;
+  border: 1px solid #3730a3 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  box-shadow: 
+    0 3px 8px rgba(99, 102, 241, 0.3),
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  font-size: 10px !important;
+  height: 20px !important;
+  line-height: 16px !important;
+  overflow: hidden !important;
+  padding: 2px 6px 2px 20px !important;
+  position: relative !important;
+  opacity: 0.95 !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.2s ease !important;
+  margin-left: 8px !important; /* Indentação visual */
+}
+
+.vis-item.vis-box.subtarefa::before {
+  content: '├─' !important;
+  position: absolute !important;
+  left: 4px !important;
+  top: 2px !important;
+  font-size: 10px !important;
+  color: #c7d2fe !important;
+  font-weight: 400 !important;
+  pointer-events: none !important;
+  text-shadow: none !important;
+}
+
+.vis-item.vis-box.subtarefa::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%) !important;
+  border-radius: 4px !important;
+  pointer-events: none !important;
+}
+
+/* ✨ ESTADOS DE HOVER - Interatividade Elegante */
+.vis-item.vis-box.tarefa:hover {
   transform: translateY(-1px) !important;
+  box-shadow: 
+    0 6px 16px rgba(255, 200, 1, 0.5),
+    0 3px 6px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+  border-color: #996f00 !important;
 }
 
-/* Labels dos grupos - COMPACTOS */
+.vis-item.vis-box.subtarefa:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 
+    0 4px 12px rgba(99, 102, 241, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+  border-color: #312e81 !important;
+}
+
+/* ✨ ESTADOS DE SELEÇÃO - Feedback Visual Claro */
+.vis-item.vis-selected.tarefa {
+  box-shadow: 
+    0 0 0 3px rgba(255, 200, 1, 0.6),
+    0 6px 20px rgba(255, 200, 1, 0.4),
+    0 3px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+  border-color: #b8860b !important;
+  z-index: 100 !important;
+}
+
+.vis-item.vis-selected.subtarefa {
+  box-shadow: 
+    0 0 0 2px rgba(99, 102, 241, 0.6),
+    0 4px 16px rgba(99, 102, 241, 0.4),
+    0 2px 6px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+  border-color: #312e81 !important;
+  z-index: 99 !important;
+}
+
+/* ✨ LABELS DOS GRUPOS - Design Refinado */
 .vis-group-label {
   font-family: 'Inter', sans-serif !important;
   font-weight: 600 !important;
-  font-size: 11px !important; /* ✅ FONTE MENOR */
-  color: var(--text-primary) !important;
-  padding: 2px 6px !important; /* ✅ PADDING MENOR */
-  background: var(--bg-light) !important;
-  line-height: 1.2 !important;
+  font-size: 12px !important;
+  color: #1f2937 !important;
+  padding: 4px 8px !important;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%) !important;
+  border-right: 3px solid #ffc801 !important;
+  line-height: 1.3 !important;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8) !important;
 }
 
-/* Eixo do tempo - COMPACTO */
+/* ✨ EIXO DO TEMPO - Tipografia Elegante */
 .vis-time-axis .vis-text {
-  color: var(--text-secondary) !important;
+  color: #6b7280 !important;
   font-weight: 500 !important;
   font-family: 'Inter', sans-serif !important;
-  font-size: 10px !important; /* ✅ FONTE MENOR */
+  font-size: 10px !important;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8) !important;
 }
 
 .vis-time-axis .vis-text.vis-major {
-  font-weight: 600 !important;
-  color: var(--text-primary) !important;
+  font-weight: 700 !important;
+  color: #374151 !important;
   font-size: 11px !important;
 }
 
-/* Painéis */
+/* ✨ PAINÉIS - Layout Sofisticado */
 .vis-panel.vis-left {
-  border-right: 1px solid var(--border-color) !important;
-  background: var(--bg-light) !important;
-  min-width: 120px !important; /* ✅ LARGURA MENOR */
+  border-right: 2px solid #e5e7eb !important;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%) !important;
+  min-width: 140px !important;
+  box-shadow: inset -1px 0 3px rgba(0, 0, 0, 0.05) !important;
 }
 
 .vis-panel.vis-center {
-  background: var(--bg-white) !important;
+  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%) !important;
 }
 
 .vis-labelset .vis-label {
-  border-bottom: 1px solid var(--border-light) !important;
-  background: var(--bg-light) !important;
-  height: 22px !important; /* ✅ ALTURA MENOR - MAIS LINHAS */
-  line-height: 20px !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%) !important;
+  height: 25px !important;
+  line-height: 21px !important;
+  transition: background 0.2s ease !important;
 }
 
-/* Tooltip - COMPACTO */
+.vis-labelset .vis-label:hover {
+  background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%) !important;
+}
+
+/* ✨ TOOLTIP - Design Premium */
 .vis-tooltip {
-  background: var(--bg-white) !important;
-  border: 1px solid var(--suno-yellow) !important;
-  border-radius: var(--radius-md) !important;
-  box-shadow: var(--shadow-lg) !important;
-  color: var(--text-primary) !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%) !important;
+  border: 2px solid #ffc801 !important;
+  border-radius: 12px !important;
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.1),
+    0 4px 12px rgba(255, 200, 1, 0.2) !important;
+  color: #1f2937 !important;
   font-family: 'Inter', sans-serif !important;
-  font-size: 11px !important; /* ✅ FONTE MENOR */
-  padding: 0.5rem !important; /* ✅ PADDING MENOR */
-  max-width: 220px !important;
-  line-height: 1.3 !important;
+  font-size: 11px !important;
+  padding: 8px 12px !important;
+  max-width: 250px !important;
+  line-height: 1.4 !important;
+  backdrop-filter: blur(10px) !important;
 }
 
-/* Grade do fundo */
+.vis-tooltip::before {
+  content: '' !important;
+  position: absolute !important;
+  top: -6px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 0 !important;
+  height: 0 !important;
+  border-left: 6px solid transparent !important;
+  border-right: 6px solid transparent !important;
+  border-bottom: 6px solid #ffc801 !important;
+}
+
+/* ✨ GRADE DO FUNDO - Linhas Sutis */
 .vis-grid.vis-minor {
-  border-left: 1px solid var(--border-light) !important;
+  border-left: 1px solid #f3f4f6 !important;
 }
 
 .vis-grid.vis-major {
-  border-left: 1px solid var(--border-color) !important;
+  border-left: 1px solid #e5e7eb !important;
 }
 
-/* Linha do tempo atual */
+.vis-grid.vis-saturday, 
+.vis-grid.vis-sunday {
+  background: rgba(255, 200, 1, 0.02) !important;
+}
+
+/* ✨ LINHA DO TEMPO ATUAL - Destaque Suno */
 .vis-current-time {
-  background: var(--suno-yellow) !important;
-  width: 2px !important;
+  background: linear-gradient(135deg, #ffc801 0%, #e6b300 100%) !important;
+  width: 3px !important;
+  box-shadow: 0 0 8px rgba(255, 200, 1, 0.6) !important;
+  border-radius: 2px !important;
 }
 
-/* ✅ AJUSTES PARA MÁXIMA DENSIDADE - MAIS LINHAS VISÍVEIS */
+/* ✨ PREVENÇÃO TOTAL DE DRAG & DROP */
+.vis-timeline .vis-item {
+  -webkit-user-drag: none !important;
+  -khtml-user-drag: none !important;
+  -moz-user-drag: none !important;
+  -o-user-drag: none !important;
+  user-drag: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+
+.vis-timeline .vis-item:hover {
+  cursor: pointer !important;
+}
+
+.vis-timeline .vis-item .vis-item-content {
+  pointer-events: none !important;
+}
+
+/* ✨ AJUSTES PARA MÁXIMA DENSIDADE */
 .vis-itemset {
   overflow-y: auto !important;
 }
 
 .vis-item {
-  margin: 1px 0 !important; /* ✅ MARGEM MÍNIMA ENTRE ITENS */
+  margin: 2px 0 !important;
 }
 
 .vis-group {
-  border-bottom: 1px solid var(--border-light) !important;
+  border-bottom: 1px solid #f3f4f6 !important;
 }
 
-/* RESPONSIVIDADE MELHORADA */
-@media (max-width: 1200px) {
-  .header-content {
-    grid-template-columns: auto 1fr auto;
-    gap: 1rem;
+/* ✨ ANIMAÇÕES SUAVES */
+.vis-item.vis-box {
+  animation: slideInScale 0.3s ease-out !important;
+}
+
+@keyframes slideInScale {
+  from {
+    opacity: 0;
+    transform: translateX(-10px) scale(0.95);
   }
-  
-  .gantt-controls {
-    gap: 0.375rem;
-    padding: 0.25rem 0.5rem;
-  }
-  
-  .legend {
-    gap: 0.5rem;
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
   }
 }
 
+/* ✨ RESPONSIVIDADE ELEGANTE */
 @media (max-width: 768px) {
-  .header {
-    padding: 0.375rem 1rem;
-    height: 50px;
+  .vis-item.vis-box.tarefa {
+    font-size: 9px !important;
+    height: 20px !important;
+    padding: 1px 6px 1px 24px !important;
   }
   
-  .header-content {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
-    text-align: center;
+  .vis-item.vis-box.subtarefa {
+    font-size: 8px !important;
+    height: 18px !important;
+    padding: 1px 4px 1px 18px !important;
   }
   
-  .header-info h1 {
-    font-size: 0.875rem;
-  }
-  
-  .container {
-    height: calc(100vh - 50px);
-  }
-  
-  .nav-tabs {
-    height: 35px;
-    padding: 0 1rem;
-  }
-  
-  .tab-pane {
-    padding: 0.5rem 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-info {
-    flex-direction: column;
-    gap: 0.125rem;
-  }
-  
-  .header-info h1 {
-    font-size: 0.75rem;
-  }
-  
-  .filter-group {
-    grid-template-columns: 1fr;
-  }
-  
-  .container {
-    height: calc(100vh - 45px);
+  .vis-group-label {
+    font-size: 10px !important;
+    padding: 3px 6px !important;
   }
 }
