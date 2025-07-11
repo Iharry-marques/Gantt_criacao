@@ -1,26 +1,12 @@
-import { useEffect, useRef } from "react";
-import Gantt from "frappe-gantt";               // aqui sim
-import "frappe-gantt/dist/frappe-gantt.css";
+import { useState, useEffect } from "react";
+import GanttTimeline from "./GanttTimeline";
 
-export default function GanttTimeline({ tasks, zoomLevel }) {
-  const el = useRef(null);
-
-  useEffect(() => {
-    if (!el.current) return;
-
-    // destrói instância anterior se existir
-    el.current.innerHTML = "";
-
-    // cria o gráfico
-    new Gantt(el.current, tasks, {
-      view_mode: zoomLevels[zoomLevel].scale,
-      step:      zoomLevels[zoomLevel].step,
-      language:  "pt-br",
-    });
-  }, [tasks, zoomLevel]);
-
-  return <div ref={el} />;
-}
+const zoomLevels = [
+  { name: "Horas", scale: "Quarter Day", step: { minutes: 30 } },
+  { name: "Dias", scale: "Day", step: { days: 1 } },
+  { name: "Semanas", scale: "Week", step: { weeks: 1 } },
+  { name: "Meses", scale: "Month", step: { months: 1 } },
+];
 
 export default function App() {
   // Estado das abas
